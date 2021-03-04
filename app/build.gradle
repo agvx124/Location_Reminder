@@ -13,6 +13,7 @@ android {
         applicationId "com.udacity.project4"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -122,5 +123,11 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:$playServicesVersion"
     implementation "com.google.android.gms:play-services-maps:$playServicesVersion"
 
+
+    // Firebase
+    implementation "com.firebaseui:firebase-ui-auth:$firebaseVersion"
+
+    // MultiDex
+    implementation "androidx.multidex:multidex:$multiDexVersion"
 
 }
