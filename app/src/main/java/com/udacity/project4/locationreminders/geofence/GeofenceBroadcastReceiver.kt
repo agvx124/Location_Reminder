@@ -1,8 +1,14 @@
 package com.udacity.project4.locationreminders.geofence
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingEvent
+import com.udacity.project4.R
+import com.udacity.project4.locationreminders.savereminder.SaveReminderFragment
 
 /**
  * Triggered by the Geofence.  Since we can have many Geofences at once, we pull the request
@@ -15,9 +21,31 @@ import android.content.Intent
  */
 
 class GeofenceBroadcastReceiver : BroadcastReceiver() {
+    @SuppressLint("StringFormatInvalid")
     override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action == SaveReminderFragment.ACTION_GEOFENCE_EVENT) {
+            val geoFencingEvent = GeofencingEvent.fromIntent(intent)
 
-//TODO: implement the onReceive method to receive the geofencing events at the background
+            if (geoFencingEvent.hasError()) {
+                val errorMessage =
+                        context.getString(R.string.fencing_event_error, errorMessage(context, geoFencingEvent.errorCode))
+                Log.e(TAG, errorMessage)
+                return
+            }
 
+            if (geoFencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+                Log.v(TAG, context.getString(R.string.geofence_entered))
+                when {
+                    geoFencingEvent.triggeringGeofences.isNotEmpty() ->
+                        GeofenceTransitionsJobIntentService.enqueueWork(context, intent)
+                    else -> {
+                        Log.e(TAG, "No Geofence Trigger Found! Abort mission!")
+                        return
+                    }
+                }
+            }
+        }
     }
+
 }
+private const val TAG = "GeofenceReceiver"
