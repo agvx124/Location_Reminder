@@ -108,36 +108,42 @@ class SaveReminderFragment : BaseFragment() {
     private fun addGeoFence(geoFencingRequest: GeofencingRequest, geofencePIntent: PendingIntent) {
         geoFencingClient.removeGeofences(geofencePIntent)?.run {
             addOnCompleteListener {
-                if (ActivityCompat.checkSelfPermission(activity!!.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return@addOnCompleteListener
-                }
-                geoFencingClient.addGeofences(geoFencingRequest, geofencePIntent)?.run {
-                    addOnSuccessListener {
-                        activity?.let {
-                            Toast.makeText(activity, R.string.geofences_added,
-                                    Toast.LENGTH_SHORT)
-                                    .show()
+//                if (ActivityCompat.checkSelfPermission(activity!!.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                    // TODO: Consider calling
+//                    //    ActivityCompat#requestPermissions
+//                    // here to request the missing permissions, and then overriding
+//                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                    //                                          int[] grantResults)
+//                    // to handle the case where the user grants the permission. See the documentation
+//                    // for ActivityCompat#requestPermissions for more details.
+//                    return@addOnCompleteListener
+//                }
+                try {
+                    geoFencingClient.addGeofences(geoFencingRequest, geofencePIntent)?.run {
+                        addOnSuccessListener {
+                            activity?.let {
+                                Toast.makeText(activity, R.string.geofences_added,
+                                        Toast.LENGTH_SHORT)
+                                        .show()
+                            }
+                        }
+                        addOnFailureListener {
+                            activity?.let {
+                                Toast.makeText(
+                                        activity, R.string.geofences_not_added,
+                                        Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            if ((it.message != null)) {
+                                Log.w(TAG, it.message.toString())
+                            }
                         }
                     }
-                    addOnFailureListener {
-                        activity?.let {
-                            Toast.makeText(
-                                    activity, R.string.geofences_not_added,
-                                    Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                        if ((it.message != null)) {
-                            Log.w(TAG, it.message.toString())
-                        }
-                    }
                 }
+                catch (e: SecurityException) {
+                    e.printStackTrace()
+                }
+
             }
         }
     }

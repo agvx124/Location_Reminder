@@ -39,6 +39,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
     private var lastKnownLocation: Location? = null
+    private var locationName: String? = null
 
     // The entry point to the Fused Location Provider.
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -83,6 +84,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         //         and navigate back to the previous fragment to save the reminder and add the geofence
         _viewModel.latitude.value = lastKnownLocation!!.latitude
         _viewModel.longitude.value = lastKnownLocation!!.longitude
+        _viewModel.reminderSelectedLocationStr.value = locationName
 
         _viewModel.navigationCommand.value = NavigationCommand.Back
     }
@@ -138,6 +140,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                         .snippet(snippet)
         )
 
+        locationName = snippet
         marker.showInfoWindow()
     }
 
