@@ -1,10 +1,12 @@
 package com.udacity.project4.locationreminders.geofence
 
 import android.annotation.SuppressLint
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
 import com.udacity.project4.R
@@ -46,6 +48,5 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             }
         }
     }
-
 }
 private const val TAG = "GeofenceReceiver"

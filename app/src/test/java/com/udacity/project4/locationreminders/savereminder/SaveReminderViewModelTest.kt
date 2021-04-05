@@ -1,6 +1,7 @@
 package com.udacity.project4.locationreminders.savereminder
 
 import android.app.Application
+import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -14,15 +15,19 @@ import com.udacity.project4.locationreminders.reminderslist.RemindersListViewMod
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert
+import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.stopKoin
+import org.robolectric.annotation.Config
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
+@Config(sdk = [Build.VERSION_CODES.O_MR1])
 class SaveReminderViewModelTest {
     // Executes each task synchronously using Architecture Components.
     @get:Rule
@@ -56,9 +61,10 @@ class SaveReminderViewModelTest {
 
         viewModel.validateAndSaveReminder(reminder)
 
-        val value = viewModel.showLoading.getOrAwaitValue()
+        assertThat(viewModel.showLoading.getOrAwaitValue(), `is`(true))
+        mainCoroutineRule.resumeDispatcher()
 
-        Assert.assertThat(value, CoreMatchers.`is`(true))
+        assertThat(viewModel.showLoading.getOrAwaitValue(), `is`(false))
     }
 
     @Test
@@ -71,7 +77,7 @@ class SaveReminderViewModelTest {
 
         val value = viewModel.showSnackBarInt.getOrAwaitValue()
 
-        Assert.assertThat(value, CoreMatchers.`is`(R.string.err_enter_title))
+        assertThat(value, `is`(R.string.err_enter_title))
     }
 
 }
